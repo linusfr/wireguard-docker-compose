@@ -1,0 +1,33 @@
+# docs
+# https://github.com/linuxserver/docker-wireguard?tab=readme-ov-file#parameters
+services:
+  wireguard:
+    restart: unless-stopped
+    network_mode: host
+    # can optionally be set to override the hostname
+    # hostname: someServerName
+    # can optionally be set to override the container name
+    # container_name: wireguard
+    image: lscr.io/linuxserver/wireguard:latest
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List
+      - TZ=Europe/Berlin
+      # optional, will be used from the clients to access the server
+      # - SERVERURL=serving-server.serve.org
+      # comma separated list of clients
+      # generated config can be found in ./config/peer_<peer-name>/peer_<peer-name>.conf
+      - PEERS=peer1,peer2,peer3
+      # which ip range should be used. /24 networks.
+      - INTERNAL_SUBNET=10.13.13.0
+      # IPs which can be accessed in the network. Specific IP or CIDR
+      - ALLOWEDIPS=10.13.13.1
+      # - SERVERPORT=51820 # does not work at the moment
+      - PUID=1000
+      - PGID=1000
+      - PEERDNS=auto
+    volumes:
+      - ./config:/config
+      - /lib/modules:/lib/modules
